@@ -513,4 +513,3 @@ document.querySelector('.social__comment-count')
 document.querySelector('.social__loadmore')
   .classList
   .add('visually-hidden');
-  
