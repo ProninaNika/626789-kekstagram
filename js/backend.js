@@ -7,12 +7,12 @@
     GALLERY_IMGS: 'https://js.dump.academy/kekstagram/data'
   };
 
-  function errorHandler(onError) {
-    onError('Произошла ошибка соединения');
+  function errorHandler(failHandler) {
+    failHandler('Произошла ошибка соединения');
   }
 
-  function timeoutHandler(onError, time) {
-    onError('Запрос не успел выполниться за ' + time / 1000 + ' сек.');
+  function timeoutHandler(failHandler, time) {
+    failHandler('Запрос не успел выполниться за ' + time / 1000 + ' сек.');
   }
 
   function renderErrorNode(message) {
@@ -34,24 +34,24 @@
     }, TIME_TO_SHOW);
   }
 
-  function request(onLoad, onError) {
+  function request(loadHandler, failHandler) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
       if (xhr.status === 200) {
-        onLoad(xhr.response);
+        loadHandler(xhr.response);
       } else {
-        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
+        failHandler('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
 
     xhr.addEventListener('error', function () {
-      errorHandler(onError);
+      errorHandler(failHandler);
     });
 
     xhr.addEventListener('timeout', function () {
-      timeoutHandler(onError, xhr.timeout);
+      timeoutHandler(failHandler, xhr.timeout);
     });
 
     xhr.timeout = 10000;
@@ -59,15 +59,15 @@
     return xhr;
   }
 
-  function load(onLoad, onError) {
-    var xhr = request(onLoad, onError);
+  function load(loadHandler, failHandler) {
+    var xhr = request(loadHandler, failHandler);
 
     xhr.open('GET', Url.GALLERY_IMGS);
     xhr.send();
   }
 
-  function upload(data, onLoad, onError) {
-    var xhr = request(onLoad, onError);
+  function upload(data, loadHandler, failHandler) {
+    var xhr = request(loadHandler, failHandler);
 
     xhr.open('POST', Url.UPLOAD_IMG);
     xhr.send(data);
